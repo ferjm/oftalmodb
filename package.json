@@ -1,0 +1,37 @@
+{
+  "name": "oftalmodb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^1.0.2",
+    "error-handler": "^1.0.0",
+    "expect.js": "^0.3.1",
+    "express": "^4.12.3",
+    "express-winston": "^0.3.1",
+    "gulp": "^3.9.0",
+    "mongodb": "^1.4.35",
+    "mongoskin": "^1.4.13",
+    "superagent": "^1.1.0",
+    "winston": "^1.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ferjm/oftalmodb.git"
+  },
+  "author": "Fernando Jiménez Moreno",
+  "license": "MPL 2.0",
+  "bugs": {
+    "url": "https://github.com/ferjm/oftalmodb/issues"
+  },
+  "homepage": "https://github.com/ferjm/oftalmodb"
+}
