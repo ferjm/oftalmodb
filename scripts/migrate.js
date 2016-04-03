@@ -64,6 +64,30 @@ var expectedCompanies = [
   'CASER',
   'ABOGADOS'
 ];
+
+var visitsTables = [
+  '_00001',
+  '_00002',
+  '_00011',
+  '_00012',
+  '_00021',
+  '_00022',
+  '_00031',
+  '_00032',
+  '_00041',
+  '_00051',
+  '_00052',
+  '_00061',
+  '_00062',
+  '_00063',
+  '_00071',
+  '_00081',
+  '_00082',
+  '_00091',
+  '_00101',
+  '_00111'
+];
+
 function checkCompany(company) {
   return true;
 //  return (company.length == 0 ||
@@ -297,8 +321,18 @@ var visitGetters = {
     for (var i = 0; i < visits.length; i++) {
       var visit = visits[i];
 
+      if (!visit || !visit.date || visit.date == null) {
+        if (i == visits.length - 1) {
+          callback(result);
+          return;
+        }
+        continue;
+      }
+
       if (isNaN(visit.date.getFullYear())) {
-        throwError('NaN ' + visit.date.toString());
+        cconsole.log('ERRoR with visit ' + JSON.stringify(visit));
+        //throwError('NaN ' + visit.date.toString());
+        continue;
       }
 
       var table = '$' + visit.date.getFullYear();
@@ -306,7 +340,9 @@ var visitGetters = {
       var query = 'SELECT TITULO, FECHA, CARTA FROM ' + table + ' WHERE COD_PAC=' +
                   codPac + ' AND FECHA=\"' + visit.date.toString('yyyy-M-d') + '\"';
       asyncCalls++;
+      cconsole.log('VISIT ' + JSON.stringify(visit));
       mysqlConnection.query(query, processRecord(visit, function(visit) {
+        cconsole.log('VISIT ' + JSON.stringify(visit));
         result.push(visit);
         asyncCalls--;
         if (!asyncCalls) {
@@ -399,21 +435,15 @@ function parseVisits(patient, callback) {
     return result;
   }
 
-  // The table names containing the details of each visit has a weird
-  // naming based in the patients code.
-  var tableName = parseFloat(patient.COD_PAC);
-  tableName = tableName/100;
-  if (isNaN(tableName)) {
-    throwError('NaN for ' + patient.COD_PAC);
-    return;
+  var query = '';
+  for (var i = 0; i < visitsTables.length; i++) {
+    query += 'SELECT * FROM ' + visitsTables[i] + ' WHERE COD_PAC=' + patient.COD_PAC;
+    if (i != visitsTables.length - 1) {
+      query += ' UNION ';
+    }
   }
-  tableName = tableName.toString().split('.')[0];
-  while (tableName.length < 5) {
-    tableName = '0' + tableName;
-  }
-  tableName = '_' + tableName;
-  query = 'SELECT * FROM ' + tableName + ' WHERE COD_PAC=' + patient.COD_PAC;
-  cconsole.log('#bold[Querying table ' + tableName + ' for visits ' +
+
+  cconsole.log('#bold[Querying all tables for visits ' +
                'details for patient ' + patient.COD_PAC + ' ' + query + ']');
   mysqlConnection.query(query, function (error, rows, fields) {
     result = [];
@@ -680,7 +710,7 @@ stdin.on('data', function (ch) {
                   patients.forEach(function(patient) {
                     mongoConnection.patients.save(patient, function(err, result) {
                       if (err || !result) {
-                        console.log('Oh crap! ', err);                        
+                        console.log('Oh crap! ', err);
                       }
                       console.log('MONGO - ', JSON.stringify(result));
                     });

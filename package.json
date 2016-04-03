@@ -19,6 +19,8 @@
     "winston": "^1.0.1"
   },
   "devDependencies": {
+    "gulp-jshint": "^1.11.1",
+    "gulp-mocha": "^2.1.2",
     "mocha": "^2.2.1"
   },
   "scripts": {

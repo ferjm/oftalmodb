@@ -6,7 +6,10 @@ var winston        = require('winston');
 
 var config = function(app) {
   app.set('port', process.env.PORT || 3000);
-  app.use(bodyParser());
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
+  app.use(bodyParser.json());
   app.use(errorHandler);
   app.use(expressWinston.logger({
     transports: [
